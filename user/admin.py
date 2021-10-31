@@ -8,6 +8,7 @@ User = get_user_model()
 
 @admin.register(User)
 class UserAdmin(auth_admin.UserAdmin):
-    list_display = ["username", "first_name",
-                    'last_name', 'email', "is_superuser"]
+    list_display = [
+        "username", "first_name", 'last_name', 'email', "is_superuser"
+    ]
     search_fields = ["first_name", 'last_name', 'email', 'username']
