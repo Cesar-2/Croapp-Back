@@ -105,10 +105,7 @@ WSGI_APPLICATION = 'croapp.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-if "DATABASE_URL" not in os.environ:
-    os.environ[
-        "DATABASE_URL"
-    ] = " "
+DATABASE_URL = os.getenv("DATABASE_URL", "")
 
 DATABASES = {}
 DATABASES["default"] = dj_database_url.config(conn_max_age=600)
