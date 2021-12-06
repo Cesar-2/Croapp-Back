@@ -1,3 +1,7 @@
 from django.urls import path, include
+from user.views import UserApi
 
-urlpatterns = []
+
+urlpatterns = [
+    path('register/', UserApi.as_view()),
+]
