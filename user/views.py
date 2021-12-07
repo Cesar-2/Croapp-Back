@@ -1,9 +1,9 @@
-from django.shortcuts import render
-from django.contrib.auth import get_user_model
-from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from user.serializers import UserLoginSerializer, UserModelSerializer
+from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
 from cerberus import Validator
 # Create your views here.
 
@@ -11,6 +11,8 @@ User = get_user_model()
 
 
 class UserApi(APIView):
+    queryset = User.objects.filter(is_active=True)
+
     def post(self, request):
         validator = Validator(
             {
@@ -21,8 +23,8 @@ class UserApi(APIView):
                 "email": {
                     "required": True, "type": "string", "regex": r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
                 },
-                "phone_number": {"required": True, "type": "string", "maxlength": 15},
-                "password": {"required": True, "type": "string", "maxlength": 128},
+                "phone_number": {"required": True, "type": "string", "maxlength": 15, "regex": r'[0-9]+'},
+                "password": {"required": True, "type": "string", "maxlength": 128, "regex": r'^\w+$'},
             }
         )
         if not validator.validate(request.data):
@@ -40,3 +42,29 @@ class UserApi(APIView):
             "code": "user_created",
             "user": user.id
         }, status=status.HTTP_201_CREATED)
+
+
+class UserLoginApi(APIView):
+    queryset = User.objects.filter(is_active=True)
+
+    def post(self, request):
+        validator = Validator(
+            {
+                "email": {
+                    "required": True, "type": "string", "regex": r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+                },
+                "password": {"required": True, "type": "string", "maxlength": 128, "regex": r'^\w+$'},
+            }
+        )
+        if not validator.validate(request.data):
+            return Response(
+                {"errors": validator.errors}, status=status.HTTP_400_BAD_REQUEST
+            )
+        serializer = UserLoginSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user, token = serializer.save()
+        data = {
+            'user': UserModelSerializer(user).data,
+            'access_token': token
+        }
+        return Response(data, status=status.HTTP_201_CREATED)
