@@ -9,6 +9,7 @@ User = get_user_model()
 class Finance(models.Model):
     name = models.CharField("Name", max_length=100)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    expected_amount = models.IntegerField("Expected amount", default=0)
 
     class Meta:
         verbose_name = "Finance"
@@ -19,26 +20,14 @@ class Finance(models.Model):
 
 
 class Cost(models.Model):
+
     name = models.CharField("Name", max_length=100)
-    amount = models.IntegerField("Name")
+    amount_cost = models.IntegerField("Cost", default=0)
     finance = models.ForeignKey(Finance, on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = "Cost"
         verbose_name_plural = "Costs"
-
-    def __str__(self):
-        return self.name
-
-
-class Expense(models.Model):
-    name = models.CharField("Name", max_length=100)
-    amount = models.IntegerField("Name")
-    finance = models.ForeignKey(Finance, on_delete=models.CASCADE)
-
-    class Meta:
-        verbose_name = "Expense"
-        verbose_name_plural = "Expenses"
 
     def __str__(self):
         return self.name

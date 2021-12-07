@@ -8,6 +8,7 @@ class User(AbstractUser):
     phone_number = models.CharField('Phone number', max_length=15)
     citizen_code = models.CharField('Citizen code', max_length=11)
     email = models.EmailField('Email address', max_length=255, unique=True)
+    amount_expense = models.IntegerField("Expense", default=0)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['password', ]
