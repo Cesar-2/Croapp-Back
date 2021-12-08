@@ -17,7 +17,7 @@ class FinanceSerializer(serializers.ModelSerializer):
         return UserModelSerializer(obj.user).data
 
     def get_real_cost(self, obj):
-        real_cost = Cost.objects.filter(finance=finance).aggregate(
+        real_cost = Cost.objects.filter(finance=obj).aggregate(
             total=Sum('amount_cost')).get('total')
         if not real_cost:
             return 0

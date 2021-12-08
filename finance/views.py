@@ -18,7 +18,8 @@ class FinanceApi(APIView):
     def post(self, request):
         validator = Validator(
             {
-                "name": {"required": True, "type": "string", "maxlength": 128}
+                "name": {"required": True, "type": "string", "maxlength": 128},
+                "expected_amount": {"required": True, "type": "integer"},
             }
         )
         if not validator.validate(request.data):
