@@ -50,7 +50,6 @@ class UserApi(APIView):
 class UserLoginApi(APIView):
     queryset = User.objects.filter(is_active=True)
     permission_classes = (permissions.AllowAny,)
-    authentication_classes = (SessionAuthentication, BasicAuthentication)
 
     def post(self, request):
         validator = Validator(
