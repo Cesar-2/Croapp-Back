@@ -15,7 +15,7 @@ User = get_user_model()
 class FinanceApi(APIView):
     queryset = User.objects.filter(is_active=True)
 
-    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    authentication_classes = (SessionAuthentication, )
     permission_classes = (IsAuthenticated,)
 
     def post(self, request):
