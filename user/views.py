@@ -1,8 +1,11 @@
-from rest_framework import status
+from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
 from user.serializers import UserLoginSerializer, UserModelSerializer
-from django.contrib.auth import get_user_model
+
+from django.contrib.auth import get_user_model, login
 from django.shortcuts import get_object_or_404
 from cerberus import Validator
 # Create your views here.
@@ -46,6 +49,8 @@ class UserApi(APIView):
 
 class UserLoginApi(APIView):
     queryset = User.objects.filter(is_active=True)
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
 
     def post(self, request):
         validator = Validator(
@@ -67,4 +72,5 @@ class UserLoginApi(APIView):
             'user': UserModelSerializer(user).data,
             'access_token': token
         }
+        login(request, user)
         return Response(data, status=status.HTTP_201_CREATED)

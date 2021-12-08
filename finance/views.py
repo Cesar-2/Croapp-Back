@@ -2,6 +2,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from finance.models import Finance
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
@@ -13,7 +14,9 @@ User = get_user_model()
 
 class FinanceApi(APIView):
     queryset = User.objects.filter(is_active=True)
-    permission_classes = [IsAuthenticated]
+
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = (IsAuthenticated,)
 
     def post(self, request):
         validator = Validator(
