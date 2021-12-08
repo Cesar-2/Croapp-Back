@@ -5,7 +5,7 @@ from rest_framework.authentication import SessionAuthentication, BasicAuthentica
 from rest_framework.permissions import IsAuthenticated
 from user.serializers import UserLoginSerializer, UserModelSerializer
 
-from django.contrib.auth import get_user_model, login
+from django.contrib.auth import get_user_model, login, authenticate
 from django.shortcuts import get_object_or_404
 from cerberus import Validator
 # Create your views here.
@@ -66,7 +66,7 @@ class UserLoginApi(APIView):
             )
         serializer = UserLoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user, token = serializer.save()
+        user, token = serializer.create(data=request.data)
         data = {
             'user': UserModelSerializer(user).data,
             'access_token': token
