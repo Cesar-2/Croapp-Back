@@ -8,7 +8,6 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
-from user.serializers import UserLoginSerializer, UserModelSerializer
 from user.models import Auth
 from django.utils.crypto import get_random_string
 from django.utils import timezone
