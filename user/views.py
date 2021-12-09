@@ -37,7 +37,7 @@ class UserApi(APIView):
                     "required": True, "type": "string", "regex": r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
                 },
                 "phone_number": {"required": True, "type": "string", "maxlength": 15, "regex": r'[0-9]+'},
-                "password": {"required": True, "type": "string","minlength":7, "maxlength": 128, "regex": r'^\w+$'},
+                "password": {"required": True, "type": "string","minlength":8, "maxlength": 128, "regex": r'^\w+$'},
             }
         )
         if not validator.validate(request.data):
@@ -83,7 +83,7 @@ class UserLoginApi(APIView):
 
         validator = Validator({
             "email": {"required": True, "type": "string"},
-            "password": {"required": True, "type": "string", "minlength": 7},
+            "password": {"required": True, "type": "string", "minlength": 8},
             "keep_logged_in": {"required": True, "type": "boolean"}
         })
         if not validator.validate(request.data):
