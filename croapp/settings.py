@@ -184,3 +184,4 @@ AUTH_USER_MODEL = "user.User"
 
 django_heroku.settings(locals())
 KEEP_LOGGED_IN_TOKEN_EXP_DAYS = 100
+TOKEN_EXP_DAYS = 2
