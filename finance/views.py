@@ -145,8 +145,7 @@ class CostApi(APIView, TokenHandler):
                 "cost": request.GET.get("id")
             }, status=status.HTTP_200_OK)
         except:
-
             return Response({
                 "code": "cost_not_found",
                 "error": "cost not found"
-            }, status=status.HTTP_404_OK)
+            }, status=status.HTTP_404_NOT_FOUND)
