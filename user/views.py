@@ -32,7 +32,7 @@ class UserApi(APIView):
                 "citizen_code": {"required": True, "type": "string", "maxlength": 11, "regex": r'[0-9]+'},
                 "first_name": {"required": True, "type": "string", "maxlength": 128},
                 "second_name": {"required": False, "type": "string", "maxlength": 128},
-                "": {"required": True, "type": "string", "maxlength": 128},
+                "last_name": {"required": True, "type": "string", "maxlength": 128},
                 "email": {
                     "required": True, "type": "string", "regex": r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
                 },
