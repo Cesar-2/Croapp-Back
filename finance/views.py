@@ -110,7 +110,7 @@ class CostApi(APIView, TokenHandler):
             )
         finance_id = request.data.pop('finance_id')
         finance = Finance.objects.create(
-            finance__id=finance_id, user=user
+            finance_id=finance_id, user=user
         )
         cost = Cost.objects.create(**request.data, finance=finance)
         return Response({
