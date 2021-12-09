@@ -1,9 +1,7 @@
 from django.db import models
 
-# Create your models here.
 
-
-class LandinPage(models.Model):
+class LandingPage(models.Model):
     name = models.CharField("Name", max_length=255)
     last_name = models.CharField("Last Name", max_length=255)
     email = models.EmailField("email", max_length=255)
