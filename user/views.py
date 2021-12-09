@@ -1,13 +1,23 @@
+from django.conf import settings
+
+import datetime as dt
+import jwt
+
 from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
 from user.serializers import UserLoginSerializer, UserModelSerializer
-
-from django.contrib.auth import get_user_model, login, authenticate
+from user.models import Auth
+from django.utils.crypto import get_random_string
+from django.utils import timezone
+from django.contrib.auth import get_user_model
+from django.contrib.auth.hashers import check_password
 from django.shortcuts import get_object_or_404
 from cerberus import Validator
+from django.views.decorators.csrf import csrf_protect
+from user.util import TokenHandler
 # Create your views here.
 
 User = get_user_model()
@@ -48,28 +58,83 @@ class UserApi(APIView):
 
 
 class UserLoginApi(APIView):
-    queryset = User.objects.filter(is_active=True)
-    permission_classes = (permissions.AllowAny,)
-
     def post(self, request):
+
+        validator = Validator({
+            "email": {"required": True, "type": "string"},
+            "password": {"required": True, "type": "string", "minlength": 7},
+            "keep_logged_in": {"required": True, "type": "boolean"}
+        })
+        if not validator.validate(request.data):
+            return Response({
+                "code": "invalid_filtering_params",
+                "detailed": "Parámetros de búsqueda inválidos",
+                "data": validator.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        user = User.objects.filter(
+            email=request.data["email"]
+        ).first()
+
+        if not user:
+            return Response({
+                "code": "user_not_found",
+                "detailed": "User not found"
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        if not check_password(request.data["password"], user.password):
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        refresh = get_random_string(30)
+
+        token = jwt.encode({
+            'expiration_date': str(
+                (
+                    dt.datetime.now() +
+                    dt.timedelta(
+                        days=settings.TOKEN_EXP_DAYS
+                        if not request.data['keep_logged_in']
+                        else settings.KEEP_LOGGED_IN_TOKEN_EXP_DAYS
+                    )
+                )
+            ),
+            'email': request.data["email"],
+            'profiles': [val.names for val in user.profile.all()],
+            'refresh': refresh
+        }, settings.SECRET_KEY, algorithm='HS256')
+
+        User.objects.filter(
+            email=request.data['email']
+        ).update(last_login=timezone.now())
+        Auth.objects.create(token=token)
+
+        return Response({
+            "token": token,
+            "refresh": refresh,
+            "id": user.pk,
+            "name": user.email,
+            "profiles": [val.names for val in user.profile.all()]
+        }, status=status.HTTP_201_CREATED)
+
+
+class UserEarnApi(APIView, TokenHandler):
+
+    def patch(self, request):
+        payload, user = self.get_payload(request)
+        if not payload:
+            return Response({
+                "code": "unauthorized",
+                "detailed": "El token es incorrecto o expiro"
+            }, status=status.HTTP_401_UNAUTHORIZED)
         validator = Validator(
             {
-                "email": {
-                    "required": True, "type": "string", "regex": r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
-                },
-                "password": {"required": True, "type": "string", "maxlength": 128, "regex": r'^\w+$'},
+                "amount_expense": {"required": True, "type": "integer", "regex": r'[0-9]+'},
             }
         )
         if not validator.validate(request.data):
             return Response(
                 {"errors": validator.errors}, status=status.HTTP_400_BAD_REQUEST
             )
-        serializer = UserLoginSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user, token = serializer.create(data=request.data)
-        data = {
-            'user': UserModelSerializer(user).data,
-            'access_token': token
-        }
-        login(request, user)
-        return Response(data, status=status.HTTP_201_CREATED)
+        user.amount_expense = request.data.get('amount_expense')
+        user.save(update_fields=["amount_expense"])
+        return Response(data, status=status.HTTP_200_OK)

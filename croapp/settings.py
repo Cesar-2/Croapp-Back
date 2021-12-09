@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
-    'rest_framework.authtoken',
     'rest_framework_swagger',
     'user',
     'finance',
@@ -51,12 +50,10 @@ INSTALLED_APPS = [
 ]
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.TokenAuthentication',
-    ),
-    'DEFAULT_PERMISSION_CLASSES': (
+    'DEFAULT_AUTHENTICATION_CLASSES': [],
+    'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
-    ),
+    ],
 }
 
 CORS_ALLOW_METHODS = [
@@ -185,3 +182,4 @@ AUTH_USER_MODEL = "user.User"
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 django_heroku.settings(locals())
+KEEP_LOGGED_IN_TOKEN_EXP_DAYS = 100
