@@ -11,3 +11,4 @@ class UserAdmin(auth_admin.UserAdmin):
     list_display = ["username", "first_name", "amount_expense",
                     'last_name', 'email', "is_superuser"]
     search_fields = ["first_name", 'last_name', 'email', 'username']
+    list_editable = ["amount_expense", ]

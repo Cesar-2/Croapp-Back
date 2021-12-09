@@ -112,7 +112,8 @@ class UserLoginApi(APIView):
             "token": token,
             "refresh": refresh,
             "id": user.pk,
-            "name": user.email,
+            "email": user.email,
+            "amount_expense": user.amount_expense,
             "profiles": [val.names for val in user.profile.all()]
         }, status=status.HTTP_201_CREATED)
 
