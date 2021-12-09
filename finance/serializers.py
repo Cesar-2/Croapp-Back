@@ -8,7 +8,7 @@ class CostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Cost
-        fields = "__all__"
+        fields = ("id", "amount_cost", "name")
 
 
 class FinanceSerializer(serializers.ModelSerializer):
@@ -33,4 +33,5 @@ class FinanceSerializer(serializers.ModelSerializer):
         return real_cost
 
     def get_costs(self, obj):
-        return CostSerializer(Cost.objects.filter(finance=obj)).data
+        costs = Cost.objects.filter(finance=obj)
+        return CostSerializer(costs, many=True).data

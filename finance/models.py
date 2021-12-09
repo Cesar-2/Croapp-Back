@@ -20,7 +20,6 @@ class Finance(models.Model):
 
 
 class Cost(models.Model):
-
     name = models.CharField("Name", max_length=100)
     amount_cost = models.IntegerField("Cost", default=0)
     finance = models.ForeignKey(Finance, on_delete=models.CASCADE)
