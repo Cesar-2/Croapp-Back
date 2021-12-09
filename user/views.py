@@ -53,7 +53,7 @@ class UserApi(APIView):
             **request.data, username=request.data.get("email"))
         return Response({
             "code": "user_created",
-            "user": user.id
+            "user": UserModelSerializer(user).data
         }, status=status.HTTP_201_CREATED)
 
 
