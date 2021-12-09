@@ -68,7 +68,7 @@ class UserApi(APIView):
             'profiles': [val.names for val in user.profile.all()],
             'refresh': refresh
         }, settings.SECRET_KEY, algorithm='HS256')
-
+        Auth.objects.create(token=token)
         return Response({
             "code": "user_created",
             "token": token,
@@ -121,9 +121,9 @@ class UserLoginApi(APIView):
             'profiles': [val.names for val in user.profile.all()],
             'refresh': refresh
         }, settings.SECRET_KEY, algorithm='HS256')
-
         User.objects.filter(
             email=request.data['email']
+            Auth.objects.create(token=token)
         ).update(last_login=timezone.now())
         Auth.objects.create(token=token)
 
