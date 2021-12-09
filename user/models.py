@@ -18,7 +18,7 @@ class Auth(models.Model):
 
 
 class Profile(models.Model):
-    names = models.CharField("Module names", max_length=255)
+    names = models.CharField("Profile names", max_length=255)
 
     class Meta:
         verbose_name = "Profile"

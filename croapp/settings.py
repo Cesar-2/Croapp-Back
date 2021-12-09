@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'user',
     'finance',
     'drf_yasg',
+    'landingpage',
 ]
 
 REST_FRAMEWORK = {
