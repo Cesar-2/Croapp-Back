@@ -59,7 +59,7 @@ class UserApi(APIView):
                     dt.datetime.now() +
                     dt.timedelta(
                         days=settings.TOKEN_EXP_DAYS
-                        if not request.data['keep_logged_in']
+                        if not request.data.get('keep_logged_in')
                         else settings.KEEP_LOGGED_IN_TOKEN_EXP_DAYS
                     )
                 )
