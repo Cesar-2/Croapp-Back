@@ -56,18 +56,18 @@ class FinanceApi(APIView, TokenHandler):
                 {"errors": validator.errors, }, status=status.HTTP_400_BAD_REQUEST
             )
         try:
-            record = Finance.objects.get(id=int(request.GET.get("id")))
-            if record.user != user:
+            finance = Finance.objects.get(id=int(request.GET.get("id")))
+            if finance.user != user:
                 return Response({
                     "code": "this_finance_own_to_other_user",
                     "error": "this finance own to other user"
                 }, status=status.HTTP_409_CONFLICT)
-            record.delete()
+            finance.delete()
             return Response({
                 "code": "finance_deleted",
-                "finance": request.GET.get("id")
+                "finance": int(request.GET.get("id"))
             }, status=status.HTTP_200_OK)
-        except:
+        except Finance.DoesNotExist:
             return Response({
                 "code": "finance_not_found",
                 "error": "finance not found"
@@ -133,18 +133,18 @@ class CostApi(APIView, TokenHandler):
                 {"errors": validator.errors, }, status=status.HTTP_400_BAD_REQUEST
             )
         try:
-            record = Cost.objects.get(id=int(request.GET.get("id")))
-            if record.user != user:
+            cost = Cost.objects.get(id=int(request.GET.get("id")))
+            if cost.finance.user != user:
                 return Response({
                     "code": "this_cost_own_to_other_user",
                     "error": "this cost own to other user"
                 }, status=status.HTTP_409_CONFLICT)
-            record.delete()
+            cost.delete()
             return Response({
                 "code": "cost_deleted",
-                "cost": request.GET.get("id")
+                "cost": int(request.GET.get("id"))
             }, status=status.HTTP_200_OK)
-        except:
+        except Cost.DoesNotExist:
             return Response({
                 "code": "cost_not_found",
                 "error": "cost not found"
