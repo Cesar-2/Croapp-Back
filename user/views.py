@@ -51,8 +51,27 @@ class UserApi(APIView):
             }, status=status.HTTP_409_CONFLICT)
         user = User.objects.create_user(
             **request.data, username=request.data.get("email"))
+        refresh = get_random_string(30)
+
+        token = jwt.encode({
+            'expiration_date': str(
+                (
+                    dt.datetime.now() +
+                    dt.timedelta(
+                        days=settings.TOKEN_EXP_DAYS
+                        if not request.data['keep_logged_in']
+                        else settings.KEEP_LOGGED_IN_TOKEN_EXP_DAYS
+                    )
+                )
+            ),
+            'email': request.data["email"],
+            'profiles': [val.names for val in user.profile.all()],
+            'refresh': refresh
+        }, settings.SECRET_KEY, algorithm='HS256')
+
         return Response({
             "code": "user_created",
+            "token": token,
             "user": UserModelSerializer(user).data
         }, status=status.HTTP_201_CREATED)
 
