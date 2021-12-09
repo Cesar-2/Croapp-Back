@@ -111,7 +111,7 @@ class UserLoginApi(APIView):
         return Response({
             "token": token,
             "refresh": refresh,
-            "id": user.pk,
+            "user": UserModelSerializer(user).data,
             "email": user.email,
             "amount_expense": user.amount_expense,
             "profiles": [val.names for val in user.profile.all()]
