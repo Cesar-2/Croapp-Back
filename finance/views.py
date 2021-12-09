@@ -109,9 +109,7 @@ class CostApi(APIView, TokenHandler):
                 {"errors": validator.errors, }, status=status.HTTP_400_BAD_REQUEST
             )
         finance_id = request.data.pop('finance_id')
-        finance = Finance.objects.create(
-            finance_id=finance_id, user=user
-        )
+        finance = Finance.objects.get(id=finance_id)
         cost = Cost.objects.create(**request.data, finance=finance)
         return Response({
             "code": "cost_created",
