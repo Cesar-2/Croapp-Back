@@ -37,7 +37,7 @@ class User(AbstractUser):
         Profile, blank=True, related_name='user_profile')
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['password', ]
+    REQUIRED_FIELDS = ['password', 'username']
 
     class Meta:
         verbose_name = 'User'
