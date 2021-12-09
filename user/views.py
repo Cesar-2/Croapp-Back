@@ -123,7 +123,6 @@ class UserLoginApi(APIView):
         }, settings.SECRET_KEY, algorithm='HS256')
         User.objects.filter(
             email=request.data['email']
-            Auth.objects.create(token=token)
         ).update(last_login=timezone.now())
         Auth.objects.create(token=token)
 
