@@ -136,16 +136,16 @@ class CostApi(APIView, TokenHandler):
             record = Cost.objects.get(id=int(request.GET.get("id")))
             if record.user != user:
                 return Response({
-                    "code": "this_finance_own_to_other_user",
-                    "error": "this finance own to other user"
+                    "code": "this_cost_own_to_other_user",
+                    "error": "this cost own to other user"
                 }, status=status.HTTP_409_CONFLICT)
             record.delete()
             return Response({
-                "code": "finance_deleted",
-                "finance": request.GET.get("id")
+                "code": "cost_deleted",
+                "cost": request.GET.get("id")
             }, status=status.HTTP_200_OK)
         except:
             return Response({
-                "code": "finance_not_found",
-                "error": "finance not found"
-            }, status=status.HTTP_404_NOT_FOUND)
+                "code": "cost_not_found",
+                "error": "cost not found"
+            }, status=status.HTTP_200_OK)
