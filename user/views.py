@@ -32,7 +32,7 @@ class UserApi(APIView):
                 "citizen_code": {"required": True, "type": "string", "maxlength": 11, "regex": r'[0-9]+'},
                 "first_name": {"required": True, "type": "string", "maxlength": 128},
                 "second_name": {"required": False, "type": "string", "maxlength": 128},
-                "last_name": {"required": True, "type": "string", "maxlength": 128},
+                "": {"required": True, "type": "string", "maxlength": 128},
                 "email": {
                     "required": True, "type": "string", "regex": r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
                 },
@@ -49,6 +49,8 @@ class UserApi(APIView):
                 "code": "user_already_exist",
                 "error": "user already exist in the platform"
             }, status=status.HTTP_409_CONFLICT)
+        request.data["first_name"] = request.data["first_name"].capitalize()
+        request.data["last_name"] = request.data["last_name"].capitalize()
         user = User.objects.create_user(
             **request.data, username=request.data.get("email"))
         refresh = get_random_string(30)
